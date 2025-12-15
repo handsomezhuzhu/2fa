@@ -1,15 +1,14 @@
 const elements = {
-  accountInput: document.getElementById('account-input'),
   secretInput: document.getElementById('secret-input'),
+  toggleSecret: document.getElementById('toggle-secret'),
   applyBtn: document.getElementById('apply-secret'),
   clearBtn: document.getElementById('clear-secret'),
   algoSelect: document.getElementById('algo-select'),
   digitsInput: document.getElementById('digits-input'),
   periodInput: document.getElementById('period-input'),
   offsetInput: document.getElementById('offset-input'),
-  countdown: document.getElementById('countdown'),
   otpValue: document.getElementById('otp-value'),
-  copyButtons: [document.getElementById('copy-current'), document.getElementById('copy-inline')],
+  copyCodeBtn: document.getElementById('copy-inline'),
   accountLabel: document.getElementById('account-label'),
   progressBar: document.getElementById('progress-bar'),
   meta: document.getElementById('meta'),
@@ -20,11 +19,24 @@ const elements = {
   video: document.getElementById('camera'),
   overlay: document.getElementById('scan-overlay'),
   scanStatus: document.getElementById('scan-status'),
+  modeManual: document.getElementById('mode-manual'),
+  modeScan: document.getElementById('mode-scan'),
+  manualPane: document.getElementById('manual-pane'),
+  scanPane: document.getElementById('scan-pane'),
+  accountInput: document.getElementById('account-input'),
+  resultSource: document.getElementById('result-source'),
+  resultAccount: document.getElementById('result-account'),
+  resultIssuer: document.getElementById('result-issuer'),
+  resultSecret: document.getElementById('result-secret'),
+  toggleResultSecret: document.getElementById('toggle-result-secret'),
+  copySecretBtn: document.getElementById('copy-secret'),
 };
 
 const state = {
   label: '未设置',
+  issuer: '—',
   secret: null,
+  rawSecret: '',
   digits: 6,
   period: 30,
   algorithm: 'SHA-1',
@@ -32,6 +44,8 @@ const state = {
   stream: null,
   timer: null,
   lastCode: null,
+  inputRevealed: false,
+  resultRevealed: false,
 };
 
 function showMessage(text, tone = 'info') {
@@ -79,7 +93,7 @@ function parseOtpUri(value) {
   return {
     label,
     secret,
-    issuer: params.get('issuer'),
+    issuer: params.get('issuer') || '—',
     algorithm: params.get('algorithm')?.toUpperCase() || 'SHA-1',
     digits: Number(params.get('digits')) || 6,
     period: Number(params.get('period')) || 30,
@@ -116,7 +130,7 @@ async function refreshCode() {
     const code = await generateTotp(state.secret, state.digits, state.period, state.algorithm, state.offset);
     state.lastCode = code;
     elements.otpValue.textContent = code;
-    elements.copyButtons.forEach((btn) => (btn.disabled = false));
+    elements.copyCodeBtn.disabled = false;
   } catch (err) {
     console.error(err);
     showMessage('生成验证码失败：' + err.message, 'danger');
@@ -125,11 +139,10 @@ async function refreshCode() {
 
 function updateCountdown() {
   if (!state.secret) {
-    elements.countdown.textContent = '等待输入密钥';
     elements.countText.textContent = '等待密钥';
     elements.progressBar.style.width = '0%';
     elements.otpValue.textContent = '------';
-    elements.copyButtons.forEach((btn) => (btn.disabled = true));
+    elements.copyCodeBtn.disabled = true;
     return;
   }
   const now = Date.now();
@@ -137,7 +150,6 @@ function updateCountdown() {
   const offsetMs = Number(state.offset || 0) * 1000;
   const elapsed = (now + offsetMs) % cycle;
   const remaining = Math.max(0, Math.floor((cycle - elapsed) / 1000));
-  elements.countdown.textContent = `本周期剩余 ${remaining}s`;
   elements.countText.textContent = `${remaining}s`;
   const percent = Math.min(100, Math.max(0, (elapsed / cycle) * 100));
   elements.progressBar.style.width = `${percent}%`;
@@ -163,7 +175,28 @@ function startTicker() {
   state.timer = requestAnimationFrame(tick);
 }
 
-function parseAndApply(rawValue, accountOverride) {
+function maskSecret(value) {
+  if (!value) return '••••••••';
+  return '•'.repeat(Math.max(8, Math.min(20, value.length)));
+}
+
+function updateResult(sourceLabel = '手动') {
+  elements.resultSource.textContent = sourceLabel;
+  elements.resultAccount.textContent = state.label || '—';
+  elements.resultIssuer.textContent = state.issuer || '—';
+  const show = state.resultRevealed;
+  elements.resultSecret.textContent = show ? state.rawSecret || '—' : maskSecret(state.rawSecret);
+  elements.toggleResultSecret.textContent = show ? '隐藏' : '显示';
+  elements.copySecretBtn.disabled = !state.rawSecret;
+}
+
+function setSecretVisibility(show) {
+  state.inputRevealed = show;
+  elements.secretInput.type = show ? 'text' : 'password';
+  elements.toggleSecret.textContent = show ? '隐藏' : '显示';
+}
+
+function parseAndApply(rawValue, accountOverride, sourceLabel = '手动') {
   const trimmed = rawValue.trim();
   if (!trimmed) {
     showMessage('请输入 Base32 密钥或 otpauth:// 链接');
@@ -172,7 +205,9 @@ function parseAndApply(rawValue, accountOverride) {
   try {
     const otpData = parseOtpUri(trimmed);
     if (otpData) {
-      state.label = otpData.issuer ? `${otpData.issuer} (${otpData.label})` : otpData.label;
+      state.label = otpData.issuer && otpData.issuer !== '—' ? `${otpData.issuer} (${otpData.label})` : otpData.label;
+      state.issuer = otpData.issuer || '—';
+      state.rawSecret = otpData.secret;
       state.secret = decodeBase32(otpData.secret);
       state.digits = otpData.digits;
       state.period = otpData.period;
@@ -182,11 +217,14 @@ function parseAndApply(rawValue, accountOverride) {
       elements.periodInput.value = state.period;
     } else {
       state.label = accountOverride || '自定义账户';
+      state.issuer = '—';
+      state.rawSecret = trimmed;
       state.secret = decodeBase32(trimmed);
     }
     state.offset = Number(elements.offsetInput.value || 0);
     updateLabels();
     refreshCode();
+    updateResult(sourceLabel);
     showMessage('密钥已更新，验证码自动刷新中', 'success');
   } catch (err) {
     showMessage(err.message, 'danger');
@@ -203,17 +241,21 @@ function handleApply() {
   state.digits = Math.min(10, Math.max(6, Number(elements.digitsInput.value) || 6));
   state.period = Math.min(120, Math.max(10, Number(elements.periodInput.value) || 30));
   state.offset = Number(elements.offsetInput.value || 0);
-  parseAndApply(elements.secretInput.value, elements.accountInput.value.trim());
+  parseAndApply(elements.secretInput.value, elements.accountInput.value.trim(), '手动');
 }
 
 function clearAll() {
   state.label = '未设置';
+  state.issuer = '—';
   state.secret = null;
+  state.rawSecret = '';
   elements.secretInput.value = '';
   elements.accountInput.value = '';
   elements.otpValue.textContent = '------';
   elements.accountLabel.textContent = '未设置';
-  elements.copyButtons.forEach((btn) => (btn.disabled = true));
+  elements.copyCodeBtn.disabled = true;
+  state.lastCode = null;
+  updateResult('手动');
   showMessage('已清除当前密钥', 'warning');
 }
 
@@ -222,6 +264,16 @@ async function copyCode() {
   try {
     await navigator.clipboard.writeText(state.lastCode);
     showMessage('已复制到剪贴板', 'success');
+  } catch (err) {
+    showMessage('复制失败：' + err.message, 'danger');
+  }
+}
+
+async function copySecret() {
+  if (!state.rawSecret) return;
+  try {
+    await navigator.clipboard.writeText(state.rawSecret);
+    showMessage('密钥已复制', 'success');
   } catch (err) {
     showMessage('复制失败：' + err.message, 'danger');
   }
@@ -252,7 +304,7 @@ function stopCamera() {
   elements.startCamera.disabled = false;
   elements.stopCamera.disabled = true;
   elements.scanStatus.textContent = '摄像头未启动';
-  elements.overlay.textContent = '点击“开启摄像头”开始扫描';
+  elements.overlay.textContent = '点击“摄像头”开始扫描';
 }
 
 function scanLoop() {
@@ -269,7 +321,7 @@ function scanLoop() {
     if (code) {
       elements.scanStatus.textContent = '二维码已识别，正在解析...';
       stopCamera();
-      parseAndApply(code.data, elements.accountInput.value.trim());
+      parseAndApply(code.data, elements.accountInput.value.trim(), '摄像头');
       return;
     }
     requestAnimationFrame(render);
@@ -292,7 +344,7 @@ function handleUpload(event) {
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
       if (code) {
-        parseAndApply(code.data, elements.accountInput.value.trim());
+        parseAndApply(code.data, elements.accountInput.value.trim(), '图片');
         showMessage('已从图片解析二维码', 'success');
       } else {
         showMessage('未识别到二维码', 'warning');
@@ -305,10 +357,21 @@ function handleUpload(event) {
   reader.readAsDataURL(file);
 }
 
+function switchMode(mode) {
+  const isManual = mode === 'manual';
+  elements.modeManual.classList.toggle('active', isManual);
+  elements.modeManual.setAttribute('aria-selected', isManual);
+  elements.modeScan.classList.toggle('active', !isManual);
+  elements.modeScan.setAttribute('aria-selected', !isManual);
+  elements.manualPane.hidden = !isManual;
+  elements.scanPane.hidden = isManual;
+}
+
 function init() {
   elements.applyBtn.addEventListener('click', handleApply);
   elements.clearBtn.addEventListener('click', clearAll);
-  elements.copyButtons.forEach((btn) => btn.addEventListener('click', copyCode));
+  elements.copyCodeBtn.addEventListener('click', copyCode);
+  elements.copySecretBtn.addEventListener('click', copySecret);
   elements.startCamera.addEventListener('click', startCamera);
   elements.stopCamera.addEventListener('click', stopCamera);
   elements.upload.addEventListener('change', handleUpload);
@@ -318,7 +381,20 @@ function init() {
       handleApply();
     }
   });
+  elements.secretInput.addEventListener('focus', () => {
+    elements.secretInput.type = 'text';
+  });
+  elements.secretInput.addEventListener('blur', () => setSecretVisibility(state.inputRevealed));
+  elements.toggleSecret.addEventListener('click', () => setSecretVisibility(!state.inputRevealed));
+  elements.toggleResultSecret.addEventListener('click', () => {
+    state.resultRevealed = !state.resultRevealed;
+    updateResult(elements.resultSource.textContent || '手动');
+  });
+  elements.modeManual.addEventListener('click', () => switchMode('manual'));
+  elements.modeScan.addEventListener('click', () => switchMode('scan'));
+
   updateLabels();
+  updateResult('手动');
   startTicker();
 }
 

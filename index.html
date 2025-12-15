@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>临时 2FA 生成器</title>
+  <title>临时 2FA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -17,14 +17,11 @@
       <p class="eyebrow">TOTP · 前端离线</p>
       <h1>临时 2FA</h1>
     </div>
-    <div class="hero-actions">
-      <button id="copy-current" class="primary" disabled>复制验证码</button>
-      <span id="countdown" aria-live="polite">等待密钥</span>
-    </div>
+    <div class="hero-note">只在浏览器内运行，适合各类 Pages</div>
   </header>
 
   <main class="layout">
-    <section class="card highlight" aria-labelledby="code-title">
+    <section class="card highlight code-card" aria-labelledby="code-title">
       <div class="section-header">
         <h2 id="code-title">验证码</h2>
         <div class="chip" id="meta"></div>
@@ -47,68 +44,102 @@
       </div>
     </section>
 
-    <section class="card" aria-labelledby="manual-entry-title">
+    <section class="card input-card" aria-labelledby="input-title">
       <div class="section-header compact">
-        <h2 id="manual-entry-title">添加密钥</h2>
-        <div class="chip subtle">手动优先</div>
-      </div>
-      <label class="field">
-        <span>账号</span>
-        <input id="account-input" type="text" placeholder="user@example.com" autocomplete="off" />
-      </label>
-      <label class="field">
-        <span>密钥 / otpauth</span>
-        <input id="secret-input" type="text" placeholder="Base32 或 otpauth://" autocomplete="off" />
-      </label>
-      <div class="actions">
-        <button id="apply-secret" class="primary">应用</button>
-        <button id="clear-secret" type="button" class="ghost">重置</button>
+        <h2 id="input-title">添加密钥</h2>
+        <div class="chip subtle">手动 / 扫描</div>
       </div>
 
-      <details class="advanced" id="advanced-toggle">
-        <summary>高级</summary>
-        <div class="advanced-grid">
-          <label class="field">
-            <span>算法</span>
-            <select id="algo-select">
-              <option value="SHA-1">SHA-1</option>
-              <option value="SHA-256">SHA-256</option>
-              <option value="SHA-512">SHA-512</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>位数</span>
-            <input id="digits-input" type="number" min="6" max="10" value="6" />
-          </label>
-          <label class="field">
-            <span>周期</span>
-            <input id="period-input" type="number" min="10" max="120" step="5" value="30" />
-          </label>
-          <label class="field">
-            <span>时间偏移</span>
-            <input id="offset-input" type="number" value="0" />
-          </label>
-        </div>
-      </details>
-    </section>
-
-    <section class="card" aria-labelledby="scan-title">
-      <div class="section-header compact">
-        <h2 id="scan-title">扫码或上传</h2>
-        <div class="chip" id="scan-status">未启动</div>
+      <div class="mode-switch" role="tablist" aria-label="选择输入方式">
+        <button id="mode-manual" class="active" role="tab" aria-selected="true">手动输入</button>
+        <button id="mode-scan" role="tab" aria-selected="false">扫码 / 上传</button>
       </div>
-      <div class="scan-grid">
-        <div class="video-wrap">
-          <video id="camera" playsinline></video>
-          <div class="overlay" id="scan-overlay">开启摄像头以扫描</div>
+
+      <div id="manual-pane" class="pane" role="tabpanel" aria-labelledby="mode-manual">
+        <label class="field secret-field">
+          <span>密钥 / otpauth</span>
+          <div class="secret-input">
+            <input id="secret-input" type="password" placeholder="Base32 或 otpauth://" autocomplete="off" />
+            <button id="toggle-secret" type="button" class="ghost">显示</button>
+          </div>
+          <small class="note">未聚焦时自动隐藏，可点击显示</small>
+        </label>
+        <div class="actions">
+          <button id="apply-secret" class="primary">应用</button>
+          <button id="clear-secret" type="button" class="ghost">重置</button>
         </div>
-        <div class="scan-actions">
-          <button id="start-camera" class="secondary">摄像头</button>
-          <button id="stop-camera" type="button" class="ghost" disabled>停止</button>
-          <label class="file-btn">
-            <input type="file" id="upload" accept="image/*" capture="environment" />
-            <span>上传图片</span>
-          </label>
+        <details class="advanced" id="advanced-toggle">
+          <summary>高级</summary>
+          <div class="advanced-grid">
+            <label class="field">
+              <span>账号</span>
+              <input id="account-input" type="text" placeholder="user@example.com" autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>算法</span>
+              <select id="algo-select">
+                <option value="SHA-1">SHA-1</option>
+                <option value="SHA-256">SHA-256</option>
+                <option value="SHA-512">SHA-512</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>位数</span>
+              <input id="digits-input" type="number" min="6" max="10" value="6" />
+            </label>
+            <label class="field">
+              <span>周期</span>
+              <input id="period-input" type="number" min="10" max="120" step="5" value="30" />
+            </label>
+            <label class="field">
+              <span>时间偏移</span>
+              <input id="offset-input" type="number" value="0" />
+            </label>
+          </div>
+        </details>
+      </div>
+
+      <div id="scan-pane" class="pane" role="tabpanel" aria-labelledby="mode-scan" hidden>
+        <div class="scan-grid">
+          <div class="video-wrap">
+            <video id="camera" playsinline></video>
+            <div class="overlay" id="scan-overlay">开启摄像头以扫描</div>
+          </div>
+          <div class="scan-actions">
+            <button id="start-camera" class="secondary">摄像头</button>
+            <button id="stop-camera" type="button" class="ghost" disabled>停止</button>
+            <label class="file-btn">
+              <input type="file" id="upload" accept="image/*" capture="environment" />
+              <span>上传图片</span>
+            </label>
+          </div>
+        </div>
+        <div class="status-line" id="scan-status">未启动</div>
+      </div>
+
+      <div class="result" aria-live="polite">
+        <div class="result-head">解析结果</div>
+        <div class="result-grid">
+          <div>
+            <div class="label">来源</div>
+            <div id="result-source" class="value muted">无</div>
+          </div>
+          <div>
+            <div class="label">账户</div>
+            <div id="result-account" class="value">—</div>
+          </div>
+          <div>
+            <div class="label">发行方</div>
+            <div id="result-issuer" class="value">—</div>
+          </div>
+          <div class="secret-display">
+            <div class="label">密钥</div>
+            <div class="secret-row">
+              <span id="result-secret" class="value">••••••••</span>
+              <button id="toggle-result-secret" type="button" class="ghost">显示</button>
+              <button id="copy-secret" type="button" class="ghost" disabled>复制</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -118,9 +149,9 @@
     <details>
       <summary>使用说明</summary>
       <ol>
-        <li>优先手动粘贴 Base32 密钥或 otpauth:// 链接，点击“应用”。</li>
-        <li>若有二维码，可直接开启摄像头或上传图片解析。</li>
-        <li>验证码自动随周期刷新，可随时复制到剪贴板。</li>
+        <li>优先粘贴 Base32 密钥或 otpauth:// 链接，保持输入框未聚焦时内容会自动遮挡。</li>
+        <li>若有二维码，可在“扫码 / 上传”中开启摄像头或上传图片解析。</li>
+        <li>验证码随周期刷新，可随时复制；解析结果中的密钥默认隐藏并可单独复制。</li>
         <li>所有计算均在浏览器完成，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。</li>
       </ol>
     </details>
