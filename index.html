@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>临时 2FA</title>
+  <title>2FA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -13,27 +13,31 @@
 </head>
 <body>
   <header class="hero">
-    <div>
-      <p class="eyebrow">TOTP · 前端离线</p>
-      <h1>临时 2FA</h1>
+    <div class="hero-content">
+      <p class="eyebrow" data-i18n="heroEyebrow">TOTP · 前端离线、只在浏览器内运行，适合各类 Pages</p>
+      <h1 data-i18n="heroTitle">2FA</h1>
+      <div class="hero-note" data-i18n="heroNote">纯前端一次性验证码工具</div>
     </div>
-    <div class="hero-note">只在浏览器内运行，适合各类 Pages</div>
+    <button id="language-toggle" class="icon-button" aria-label="Switch language" title="Switch language">
+      <span class="icon">🌐</span>
+      <span id="language-code">EN</span>
+    </button>
   </header>
 
   <main class="layout">
     <section class="card highlight code-card" aria-labelledby="code-title">
       <div class="section-header">
-        <h2 id="code-title">验证码</h2>
+        <h2 id="code-title" data-i18n="codeTitle">验证码</h2>
         <div class="chip" id="meta"></div>
       </div>
       <div class="code-focus">
         <div class="account-line">
-          <div class="label">账户</div>
+          <div class="label" data-i18n="account">账户</div>
           <div id="account-label" class="value">未设置</div>
         </div>
         <div class="code-block">
           <div class="code" id="otp-value">------</div>
-          <button id="copy-inline" class="primary" disabled aria-label="复制验证码">复制</button>
+          <button id="copy-inline" class="primary" disabled aria-label="复制验证码" data-i18n="copyCode">复制</button>
         </div>
         <div class="progress-line">
           <div class="progress">
@@ -43,7 +47,7 @@
         </div>
         <div class="secondary-codes">
           <div>
-            <div class="label">下一个</div>
+            <div class="label" data-i18n="next">下一个</div>
             <div id="next-otp" class="next-code">------</div>
           </div>
         </div>
@@ -52,37 +56,38 @@
 
     <section class="card input-card" aria-labelledby="input-title">
       <div class="section-header compact">
-        <h2 id="input-title">添加密钥</h2>
-        <div class="chip subtle">手动 / 扫描</div>
+        <h2 id="input-title" data-i18n="inputTitle">添加密钥</h2>
+        <div class="chip subtle" data-i18n="inputChip">手动 / 扫描 / 上传</div>
       </div>
 
       <div class="mode-switch" role="tablist" aria-label="选择输入方式">
-        <button id="mode-manual" class="active" role="tab" aria-selected="true">手动输入</button>
-        <button id="mode-scan" role="tab" aria-selected="false">扫码 / 上传</button>
+        <button id="mode-manual" class="active" role="tab" aria-selected="true" data-i18n="modeManual">手动输入</button>
+        <button id="mode-scan" role="tab" aria-selected="false" data-i18n="modeScan">扫码</button>
+        <button id="mode-upload" role="tab" aria-selected="false" data-i18n="modeUpload">导入图片</button>
       </div>
 
       <div id="manual-pane" class="pane" role="tabpanel" aria-labelledby="mode-manual">
         <label class="field secret-field">
-          <span>密钥 / otpauth</span>
+          <span data-i18n="secretLabel">密钥 / otpauth</span>
           <div class="secret-input">
             <input id="secret-input" type="password" placeholder="Base32 或 otpauth://" autocomplete="off" />
-            <button id="toggle-secret" type="button" class="ghost">显示</button>
+            <button id="toggle-secret" type="button" class="ghost" data-i18n="show">显示</button>
           </div>
-          <small class="note">未聚焦时自动隐藏，可点击显示</small>
+          <small class="note" data-i18n="secretNote">未聚焦时自动隐藏，可点击显示</small>
         </label>
         <div class="actions">
-          <button id="apply-secret" class="primary">应用</button>
-          <button id="clear-secret" type="button" class="ghost">重置</button>
+          <button id="apply-secret" class="primary" data-i18n="apply">应用</button>
+          <button id="clear-secret" type="button" class="ghost" data-i18n="reset">重置</button>
         </div>
         <details class="advanced" id="advanced-toggle">
-          <summary>高级</summary>
+          <summary data-i18n="advanced">高级</summary>
           <div class="advanced-grid">
             <label class="field">
-              <span>账号</span>
+              <span data-i18n="account">账号</span>
               <input id="account-input" type="text" placeholder="user@example.com" autocomplete="off" />
             </label>
             <label class="field">
-              <span>算法</span>
+              <span data-i18n="algorithm">算法</span>
               <select id="algo-select">
                 <option value="SHA-1">SHA-1</option>
                 <option value="SHA-256">SHA-256</option>
@@ -90,15 +95,15 @@
               </select>
             </label>
             <label class="field">
-              <span>位数</span>
+              <span data-i18n="digits">位数</span>
               <input id="digits-input" type="number" min="6" max="10" value="6" />
             </label>
             <label class="field">
-              <span>周期</span>
+              <span data-i18n="period">周期</span>
               <input id="period-input" type="number" min="10" max="120" step="5" value="30" />
             </label>
             <label class="field">
-              <span>时间偏移</span>
+              <span data-i18n="offset">时间偏移</span>
               <input id="offset-input" type="number" value="0" />
             </label>
           </div>
@@ -112,37 +117,44 @@
             <div class="overlay" id="scan-overlay">开启摄像头以扫描</div>
           </div>
           <div class="scan-actions">
-            <button id="camera-toggle" class="secondary">开启摄像头</button>
-            <label class="file-btn">
-              <input type="file" id="upload" accept="image/*" />
-              <span>上传图片</span>
-            </label>
+            <button id="camera-toggle" class="secondary" data-i18n="startCamera">开启摄像头</button>
           </div>
         </div>
         <div class="status-line" id="scan-status">未启动</div>
       </div>
 
+      <div id="upload-pane" class="pane" role="tabpanel" aria-labelledby="mode-upload" hidden>
+        <div class="upload-card">
+          <p class="upload-tip" data-i18n="uploadTip">上传二维码图片以解析密钥</p>
+          <label class="file-btn">
+            <input type="file" id="upload" accept="image/*" />
+            <span data-i18n="uploadButton">上传图片</span>
+          </label>
+          <div class="status-line" id="upload-status">等待上传</div>
+        </div>
+      </div>
+
       <div class="result" aria-live="polite">
-        <div class="result-head">解析结果</div>
+        <div class="result-head" data-i18n="resultHead">解析结果</div>
         <div class="result-grid">
           <div>
-            <div class="label">来源</div>
+            <div class="label" data-i18n="source">来源</div>
             <div id="result-source" class="value muted">无</div>
           </div>
           <div>
-            <div class="label">账户</div>
+            <div class="label" data-i18n="account">账户</div>
             <div id="result-account" class="value">—</div>
           </div>
           <div>
-            <div class="label">发行方</div>
+            <div class="label" data-i18n="issuer">发行方</div>
             <div id="result-issuer" class="value">—</div>
           </div>
           <div class="secret-display">
-            <div class="label">密钥</div>
+            <div class="label" data-i18n="secret">密钥</div>
             <div class="secret-row">
               <span id="result-secret" class="value">••••••••</span>
-              <button id="toggle-result-secret" type="button" class="ghost">显示</button>
-              <button id="copy-secret" type="button" class="ghost" disabled>复制</button>
+              <button id="toggle-result-secret" type="button" class="ghost" data-i18n="show">显示</button>
+              <button id="copy-secret" type="button" class="ghost" disabled data-i18n="copySecret">复制</button>
             </div>
           </div>
         </div>
@@ -152,12 +164,12 @@
 
   <footer class="footer">
     <details>
-      <summary>使用说明</summary>
+      <summary data-i18n="guide">使用说明</summary>
       <ol>
-        <li>优先粘贴 Base32 密钥或 otpauth:// 链接，保持输入框未聚焦时内容会自动遮挡。</li>
-        <li>若有二维码，可在“扫码 / 上传”中开启摄像头或上传图片解析。</li>
-        <li>验证码随周期刷新，可随时复制；解析结果中的密钥默认隐藏并可单独复制。</li>
-        <li>所有计算均在浏览器完成，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。</li>
+        <li data-i18n="tipPaste">优先粘贴 Base32 密钥或 otpauth:// 链接，保持输入框未聚焦时内容会自动遮挡。</li>
+        <li data-i18n="tipScan">若有二维码，可在“扫码”或“导入图片”中解析。</li>
+        <li data-i18n="tipCopy">验证码随周期刷新，可随时复制；解析结果中的密钥默认隐藏并可单独复制。</li>
+        <li data-i18n="tipOffline">所有计算均在浏览器完成，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。</li>
       </ol>
     </details>
   </footer>

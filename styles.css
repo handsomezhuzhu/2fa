@@ -26,16 +26,22 @@ body {
 
 .hero {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem max(1.5rem, 5vw);
+  gap: 0.5rem;
+  padding: 1.25rem max(1.5rem, 5vw) 1.4rem;
   border-bottom: 1px solid var(--border);
   background: rgba(12, 12, 16, 0.8);
   position: sticky;
   top: 0;
   z-index: 1;
   backdrop-filter: blur(18px);
+  text-align: center;
+}
+
+.hero-content {
+  display: grid;
+  gap: 0.3rem;
 }
 
 .hero h1 {
@@ -53,6 +59,24 @@ body {
   color: var(--muted);
   margin: 0;
 }
+
+.icon-button {
+  position: absolute;
+  right: max(1.25rem, 4vw);
+  top: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.icon-button .icon { font-size: 1.1rem; }
 
 .layout {
   display: grid;
@@ -138,6 +162,13 @@ button,
   background: var(--accent);
   transition: transform 0.1s ease, filter 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 12px 24px rgba(122, 166, 255, 0.24);
+}
+
+button.icon-button {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  box-shadow: none;
+  padding: 0.55rem 0.9rem;
 }
 
 button:disabled,
@@ -264,7 +295,7 @@ button:active,
 
 .mode-switch {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
@@ -300,6 +331,21 @@ button:active,
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   align-items: center;
+}
+
+.upload-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+}
+
+.upload-tip {
+  margin: 0;
+  color: var(--muted);
 }
 
 .video-wrap {
