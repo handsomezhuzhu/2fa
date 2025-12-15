@@ -60,9 +60,22 @@ function showMessage(text, tone = 'info') {
   elements.meta.style.color = palette[tone] || palette.info;
 }
 
+function normalizeAlgorithm(input) {
+  const normalized = input.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  const map = {
+    SHA1: 'SHA-1',
+    'SHA-1': 'SHA-1',
+    SHA256: 'SHA-256',
+    'SHA-256': 'SHA-256',
+    SHA512: 'SHA-512',
+    'SHA-512': 'SHA-512',
+  };
+  return map[normalized] || null;
+}
+
 function decodeBase32(input) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-  const sanitized = input.replace(/\s+/g, '').toUpperCase();
+  const sanitized = input.replace(/\s+/g, '').replace(/=+$/, '').toUpperCase();
   let bits = '';
   for (const char of sanitized) {
     const idx = alphabet.indexOf(char);
@@ -91,11 +104,17 @@ function parseOtpUri(value) {
   if (!secret) {
     throw new Error('二维码中缺少 secret');
   }
+  const algorithmParam = params.get('algorithm');
+  const normalizedAlgorithm = algorithmParam ? normalizeAlgorithm(algorithmParam) : 'SHA-1';
+  if (!normalizedAlgorithm) {
+    throw new Error('二维码中的算法不受支持');
+  }
+
   return {
     label,
     secret,
     issuer: params.get('issuer') || '—',
-    algorithm: params.get('algorithm')?.toUpperCase() || 'SHA-1',
+    algorithm: normalizedAlgorithm,
     digits: Number(params.get('digits')) || 6,
     period: Number(params.get('period')) || 30,
   };
@@ -242,7 +261,7 @@ function updateLabels() {
 }
 
 function handleApply() {
-  state.algorithm = elements.algoSelect.value;
+  state.algorithm = normalizeAlgorithm(elements.algoSelect.value) || 'SHA-1';
   state.digits = Math.min(10, Math.max(6, Number(elements.digitsInput.value) || 6));
   state.period = Math.min(120, Math.max(10, Number(elements.periodInput.value) || 30));
   state.offset = Number(elements.offsetInput.value || 0);
