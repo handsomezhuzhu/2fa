@@ -219,6 +219,10 @@ button:active,
   cursor: pointer;
 }
 
+.advanced {
+  margin-top: 0.75rem;
+}
+
 .advanced summary {
   cursor: pointer;
   color: var(--text);
