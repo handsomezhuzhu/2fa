@@ -13,8 +13,7 @@ const elements = {
   progressBar: document.getElementById('progress-bar'),
   meta: document.getElementById('meta'),
   countText: document.getElementById('count-text'),
-  startCamera: document.getElementById('start-camera'),
-  stopCamera: document.getElementById('stop-camera'),
+  cameraToggle: document.getElementById('camera-toggle'),
   upload: document.getElementById('upload'),
   video: document.getElementById('camera'),
   overlay: document.getElementById('scan-overlay'),
@@ -30,6 +29,7 @@ const elements = {
   resultSecret: document.getElementById('result-secret'),
   toggleResultSecret: document.getElementById('toggle-result-secret'),
   copySecretBtn: document.getElementById('copy-secret'),
+  nextOtp: document.getElementById('next-otp'),
 };
 
 const state = {
@@ -44,6 +44,7 @@ const state = {
   stream: null,
   timer: null,
   lastCode: null,
+  nextCode: null,
   inputRevealed: false,
   resultRevealed: false,
 };
@@ -105,9 +106,9 @@ async function hmac(message, secret, algorithm) {
   return crypto.subtle.sign('HMAC', key, message);
 }
 
-async function generateTotp(secret, digits, period, algorithm, offset) {
+async function generateTotp(secret, digits, period, algorithm, offset, step = 0) {
   const epochSeconds = Math.floor(Date.now() / 1000) + Number(offset || 0);
-  const counter = Math.floor(epochSeconds / period);
+  const counter = Math.floor(epochSeconds / period) + step;
   const counterBytes = new ArrayBuffer(8);
   const view = new DataView(counterBytes);
   view.setUint32(0, Math.floor(counter / 2 ** 32), false);
@@ -128,8 +129,11 @@ async function refreshCode() {
   if (!state.secret) return;
   try {
     const code = await generateTotp(state.secret, state.digits, state.period, state.algorithm, state.offset);
+    const next = await generateTotp(state.secret, state.digits, state.period, state.algorithm, state.offset, 1);
     state.lastCode = code;
+    state.nextCode = next;
     elements.otpValue.textContent = code;
+    elements.nextOtp.textContent = next;
     elements.copyCodeBtn.disabled = false;
   } catch (err) {
     console.error(err);
@@ -142,6 +146,7 @@ function updateCountdown() {
     elements.countText.textContent = '等待密钥';
     elements.progressBar.style.width = '0%';
     elements.otpValue.textContent = '------';
+    elements.nextOtp.textContent = '------';
     elements.copyCodeBtn.disabled = true;
     return;
   }
@@ -253,8 +258,10 @@ function clearAll() {
   elements.accountInput.value = '';
   elements.otpValue.textContent = '------';
   elements.accountLabel.textContent = '未设置';
+  elements.nextOtp.textContent = '------';
   elements.copyCodeBtn.disabled = true;
   state.lastCode = null;
+  state.nextCode = null;
   updateResult('手动');
   showMessage('已清除当前密钥', 'warning');
 }
@@ -281,17 +288,20 @@ async function copySecret() {
 
 async function startCamera() {
   try {
+    elements.cameraToggle.disabled = true;
     state.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     elements.video.srcObject = state.stream;
     await elements.video.play();
     elements.scanStatus.textContent = '摄像头已开启，正在扫描...';
     elements.overlay.textContent = '将二维码置于取景框中央';
-    elements.startCamera.disabled = true;
-    elements.stopCamera.disabled = false;
+    elements.cameraToggle.textContent = '停止扫描';
     scanLoop();
   } catch (err) {
     showMessage('无法开启摄像头：' + err.message, 'danger');
     elements.scanStatus.textContent = '摄像头不可用';
+    stopCamera();
+  } finally {
+    elements.cameraToggle.disabled = false;
   }
 }
 
@@ -301,10 +311,17 @@ function stopCamera() {
     state.stream = null;
   }
   elements.video.srcObject = null;
-  elements.startCamera.disabled = false;
-  elements.stopCamera.disabled = true;
+  elements.cameraToggle.textContent = '开启摄像头';
   elements.scanStatus.textContent = '摄像头未启动';
-  elements.overlay.textContent = '点击“摄像头”开始扫描';
+  elements.overlay.textContent = '点击“开启摄像头”开始扫描';
+}
+
+function toggleCamera() {
+  if (state.stream) {
+    stopCamera();
+  } else {
+    startCamera();
+  }
 }
 
 function scanLoop() {
@@ -365,6 +382,9 @@ function switchMode(mode) {
   elements.modeScan.setAttribute('aria-selected', !isManual);
   elements.manualPane.hidden = !isManual;
   elements.scanPane.hidden = isManual;
+  if (isManual) {
+    stopCamera();
+  }
 }
 
 function init() {
@@ -372,8 +392,7 @@ function init() {
   elements.clearBtn.addEventListener('click', clearAll);
   elements.copyCodeBtn.addEventListener('click', copyCode);
   elements.copySecretBtn.addEventListener('click', copySecret);
-  elements.startCamera.addEventListener('click', startCamera);
-  elements.stopCamera.addEventListener('click', stopCamera);
+  elements.cameraToggle.addEventListener('click', toggleCamera);
   elements.upload.addEventListener('change', handleUpload);
   elements.secretInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {

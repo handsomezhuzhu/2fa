@@ -41,6 +41,12 @@
           </div>
           <span class="count-text" id="count-text">等待密钥</span>
         </div>
+        <div class="secondary-codes">
+          <div>
+            <div class="label">下一个</div>
+            <div id="next-otp" class="next-code">------</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -106,10 +112,9 @@
             <div class="overlay" id="scan-overlay">开启摄像头以扫描</div>
           </div>
           <div class="scan-actions">
-            <button id="start-camera" class="secondary">摄像头</button>
-            <button id="stop-camera" type="button" class="ghost" disabled>停止</button>
+            <button id="camera-toggle" class="secondary">开启摄像头</button>
             <label class="file-btn">
-              <input type="file" id="upload" accept="image/*" capture="environment" />
+              <input type="file" id="upload" accept="image/*" />
               <span>上传图片</span>
             </label>
           </div>
