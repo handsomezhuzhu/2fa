@@ -189,7 +189,20 @@ button:active,
 .account-line {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+
+.account-line .label {
+  white-space: nowrap;
+}
+
+.account-line .value {
+  flex: 1 1 200px;
+  min-width: 0;
+  word-break: break-word;
+  line-height: 1.4;
 }
 
 .label { color: var(--muted); font-size: 0.95rem; }
