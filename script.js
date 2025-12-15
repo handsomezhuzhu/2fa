@@ -1,7 +1,6 @@
 const translations = {
   'zh-CN': {
     pageTitle: '2FA',
-    heroEyebrow: 'TOTP · 前端离线、只在浏览器内运行，适合各类 Pages',
     heroTitle: '2FA',
     heroNote: '纯前端一次性验证码工具',
     languageToggle: '切换语言',
@@ -78,7 +77,6 @@ const translations = {
   },
   en: {
     pageTitle: '2FA',
-    heroEyebrow: 'TOTP · Offline front-end, runs in-browser for any Pages host',
     heroTitle: '2FA',
     heroNote: 'Browser-only one-time code helper',
     languageToggle: 'Switch language',

@@ -150,6 +150,26 @@ body {
   flex-wrap: wrap;
 }
 
+@media (min-width: 900px) {
+  .actions {
+    justify-content: flex-start;
+  }
+
+  .actions button {
+    padding: 0.65rem 1rem;
+    border-radius: 12px;
+  }
+
+  .actions .primary {
+    box-shadow: 0 10px 26px rgba(122, 166, 255, 0.22);
+  }
+
+  .actions .ghost {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
 button,
 .file-btn span {
   border: none;
@@ -409,6 +429,27 @@ video {
   align-items: center;
   gap: 0.4rem;
   flex-wrap: wrap;
+}
+
+.secret-display .value {
+  display: block;
+  max-width: 100%;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.secret-row {
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.secret-row button {
+  flex-shrink: 0;
 }
 
 .result {
