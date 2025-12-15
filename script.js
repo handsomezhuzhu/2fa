@@ -1,3 +1,173 @@
+const translations = {
+  'zh-CN': {
+    pageTitle: '2FA',
+    heroTitle: '2FA',
+    heroNote: '纯前端一次性验证码工具',
+    languageToggle: '切换语言',
+    languageCode: '中',
+    codeTitle: '验证码',
+    account: '账户',
+    copyCode: '复制',
+    next: '下一个',
+    inputTitle: '添加密钥',
+    inputChip: '手动 / 扫描 / 上传',
+    modeManual: '手动输入',
+    modeScan: '扫码',
+    modeUpload: '导入图片',
+    secretLabel: '密钥 / otpauth',
+    secretPlaceholder: 'Base32 或 otpauth://',
+    show: '显示',
+    hide: '隐藏',
+    secretNote: '未聚焦时自动隐藏，可点击显示',
+    apply: '应用',
+    reset: '重置',
+    advanced: '高级',
+    algorithm: '算法',
+    digits: '位数',
+    period: '周期',
+    offset: '时间偏移',
+    startCamera: '开启摄像头',
+    stopCamera: '停止扫描',
+    scanOverlayIdle: '开启摄像头以扫描',
+    scanOverlayActive: '将二维码置于取景框中央',
+    scanStatusIdle: '未启动',
+    scanStatusScanning: '摄像头已开启，正在扫描...',
+    scanStatusUnavailable: '摄像头不可用',
+    uploadTip: '上传二维码图片以解析密钥',
+    uploadButton: '上传图片',
+    uploadStatusIdle: '等待上传',
+    uploadStatusReading: '正在读取图片...',
+    uploadStatusParsed: '二维码已识别',
+    uploadStatusNotFound: '未识别到二维码',
+    resultHead: '解析结果',
+    source: '来源',
+    issuer: '发行方',
+    secret: '密钥',
+    copySecret: '复制',
+    resultSourceNone: '无',
+    waitingSecret: '等待密钥',
+    metaTemplate: '算法 {algorithm} · 位数 {digits} · 周期 {period}s',
+    countSeconds: '{remaining}s',
+    accountUnset: '未设置',
+    issuerPlaceholder: '—',
+    guide: '使用说明',
+    tipPaste: '优先粘贴 Base32 密钥或 otpauth:// 链接，保持输入框未聚焦时内容会自动遮挡。',
+    tipScan: '若有二维码，可在“扫码”或“导入图片”中解析。',
+    tipCopy: '验证码随周期刷新，可随时复制；解析结果中的密钥默认隐藏并可单独复制。',
+    tipOffline: '所有计算均在浏览器完成，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。',
+    messageEnterSecret: '请输入 Base32 密钥或 otpauth:// 链接',
+    messageSecretUpdated: '密钥已更新，验证码自动刷新中',
+    messageSecretCleared: '已清除当前密钥',
+    messageCopyCode: '已复制到剪贴板',
+    messageCopySecret: '密钥已复制',
+    messageCopyFailed: '复制失败：{reason}',
+    errorInvalidChar: '密钥含无效字符',
+    errorUnsupportedAlgorithm: '二维码中的算法不受支持',
+    errorMissingSecret: '二维码中缺少 secret',
+    errorOnlyTotp: '仅支持 TOTP',
+    errorGenerate: '生成验证码失败：{reason}',
+    cameraError: '无法开启摄像头：{reason}',
+    qrParsedFromImage: '已从图片解析二维码',
+    qrNotFound: '未识别到二维码',
+    sourceManual: '手动',
+    sourceCamera: '摄像头',
+    sourceImage: '图片',
+    defaultIssuer: '—',
+    defaultResultAccount: '—',
+  },
+  en: {
+    pageTitle: '2FA',
+    heroTitle: '2FA',
+    heroNote: 'Browser-only one-time code helper',
+    languageToggle: 'Switch language',
+    languageCode: 'EN',
+    codeTitle: 'Codes',
+    account: 'Account',
+    copyCode: 'Copy',
+    next: 'Next',
+    inputTitle: 'Add secret',
+    inputChip: 'Manual / Scan / Upload',
+    modeManual: 'Manual',
+    modeScan: 'Scan',
+    modeUpload: 'Image',
+    secretLabel: 'Secret / otpauth',
+    secretPlaceholder: 'Base32 or otpauth://',
+    show: 'Show',
+    hide: 'Hide',
+    secretNote: 'Hidden when unfocused; click to reveal',
+    apply: 'Apply',
+    reset: 'Reset',
+    advanced: 'Advanced',
+    algorithm: 'Algorithm',
+    digits: 'Digits',
+    period: 'Period',
+    offset: 'Time offset',
+    startCamera: 'Start camera',
+    stopCamera: 'Stop scan',
+    scanOverlayIdle: 'Enable camera to scan',
+    scanOverlayActive: 'Center the QR code in the frame',
+    scanStatusIdle: 'Not started',
+    scanStatusScanning: 'Camera on, scanning...',
+    scanStatusUnavailable: 'Camera unavailable',
+    uploadTip: 'Upload a QR image to parse the secret',
+    uploadButton: 'Upload image',
+    uploadStatusIdle: 'Waiting for upload',
+    uploadStatusReading: 'Reading image...',
+    uploadStatusParsed: 'QR recognized',
+    uploadStatusNotFound: 'No QR code found',
+    resultHead: 'Parsed result',
+    source: 'Source',
+    issuer: 'Issuer',
+    secret: 'Secret',
+    copySecret: 'Copy',
+    resultSourceNone: 'None',
+    waitingSecret: 'Waiting for secret',
+    metaTemplate: 'Algo {algorithm} · Digits {digits} · Period {period}s',
+    countSeconds: '{remaining}s',
+    accountUnset: 'Not set',
+    issuerPlaceholder: '—',
+    guide: 'Guide',
+    tipPaste: 'Prefer pasting a Base32 secret or otpauth:// URI; the field hides when unfocused.',
+    tipScan: 'Use “Scan” or “Image” to read QR codes.',
+    tipCopy: 'Codes refresh automatically; copy codes or secrets anytime.',
+    tipOffline: 'All calculations stay in the browser—great for GitHub Pages, Cloudflare Pages, EdgeOne Pages, Vercel, Netlify, Esa Pages, etc.',
+    messageEnterSecret: 'Enter a Base32 secret or otpauth:// link',
+    messageSecretUpdated: 'Secret updated; codes refresh automatically',
+    messageSecretCleared: 'Secret cleared',
+    messageCopyCode: 'Copied to clipboard',
+    messageCopySecret: 'Secret copied',
+    messageCopyFailed: 'Copy failed: {reason}',
+    errorInvalidChar: 'Secret contains invalid characters',
+    errorUnsupportedAlgorithm: 'Algorithm in the QR is unsupported',
+    errorMissingSecret: 'QR missing secret',
+    errorOnlyTotp: 'Only TOTP is supported',
+    errorGenerate: 'Failed to generate code: {reason}',
+    cameraError: 'Cannot enable camera: {reason}',
+    qrParsedFromImage: 'QR decoded from image',
+    qrNotFound: 'No QR code detected',
+    sourceManual: 'Manual',
+    sourceCamera: 'Camera',
+    sourceImage: 'Image',
+    defaultIssuer: '—',
+    defaultResultAccount: '—',
+  },
+};
+
+const localeOrder = ['zh-CN', 'en'];
+const defaultLocale = navigator.language?.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
+
+function t(key, locale = state?.locale || defaultLocale) {
+  return translations[locale]?.[key] ?? translations.en[key] ?? key;
+}
+
+function format(key, params = {}) {
+  let text = t(key);
+  for (const [k, v] of Object.entries(params)) {
+    text = text.replace(`{${k}}`, v);
+  }
+  return text;
+}
+
 const elements = {
   secretInput: document.getElementById('secret-input'),
   toggleSecret: document.getElementById('toggle-secret'),
@@ -20,8 +190,11 @@ const elements = {
   scanStatus: document.getElementById('scan-status'),
   modeManual: document.getElementById('mode-manual'),
   modeScan: document.getElementById('mode-scan'),
+  modeUpload: document.getElementById('mode-upload'),
   manualPane: document.getElementById('manual-pane'),
   scanPane: document.getElementById('scan-pane'),
+  uploadPane: document.getElementById('upload-pane'),
+  uploadStatus: document.getElementById('upload-status'),
   accountInput: document.getElementById('account-input'),
   resultSource: document.getElementById('result-source'),
   resultAccount: document.getElementById('result-account'),
@@ -30,11 +203,14 @@ const elements = {
   toggleResultSecret: document.getElementById('toggle-result-secret'),
   copySecretBtn: document.getElementById('copy-secret'),
   nextOtp: document.getElementById('next-otp'),
+  languageToggle: document.getElementById('language-toggle'),
+  languageCode: document.getElementById('language-code'),
 };
 
 const state = {
-  label: '未设置',
-  issuer: '—',
+  locale: defaultLocale,
+  label: t('accountUnset', defaultLocale),
+  issuer: t('defaultIssuer', defaultLocale),
   secret: null,
   rawSecret: '',
   digits: 6,
@@ -80,7 +256,7 @@ function decodeBase32(input) {
   for (const char of sanitized) {
     const idx = alphabet.indexOf(char);
     if (idx === -1) {
-      throw new Error('密钥含无效字符');
+      throw new Error(t('errorInvalidChar'));
     }
     bits += idx.toString(2).padStart(5, '0');
   }
@@ -96,24 +272,24 @@ function parseOtpUri(value) {
   const url = new URL(value);
   const type = url.hostname.toLowerCase();
   if (type !== 'totp') {
-    throw new Error('仅支持 TOTP');
+    throw new Error(t('errorOnlyTotp'));
   }
-  const label = decodeURIComponent(url.pathname.replace(/^\//, '')) || '未设置';
+  const label = decodeURIComponent(url.pathname.replace(/^\//, '')) || t('accountUnset');
   const params = url.searchParams;
   const secret = params.get('secret');
   if (!secret) {
-    throw new Error('二维码中缺少 secret');
+    throw new Error(t('errorMissingSecret'));
   }
   const algorithmParam = params.get('algorithm');
   const normalizedAlgorithm = algorithmParam ? normalizeAlgorithm(algorithmParam) : 'SHA-1';
   if (!normalizedAlgorithm) {
-    throw new Error('二维码中的算法不受支持');
+    throw new Error(t('errorUnsupportedAlgorithm'));
   }
 
   return {
     label,
     secret,
-    issuer: params.get('issuer') || '—',
+    issuer: params.get('issuer') || t('defaultIssuer'),
     algorithm: normalizedAlgorithm,
     digits: Number(params.get('digits')) || 6,
     period: Number(params.get('period')) || 30,
@@ -156,13 +332,13 @@ async function refreshCode() {
     elements.copyCodeBtn.disabled = false;
   } catch (err) {
     console.error(err);
-    showMessage('生成验证码失败：' + err.message, 'danger');
+    showMessage(format('errorGenerate', { reason: err.message }), 'danger');
   }
 }
 
 function updateCountdown() {
   if (!state.secret) {
-    elements.countText.textContent = '等待密钥';
+    elements.countText.textContent = t('waitingSecret');
     elements.progressBar.style.width = '0%';
     elements.otpValue.textContent = '------';
     elements.nextOtp.textContent = '------';
@@ -174,7 +350,7 @@ function updateCountdown() {
   const offsetMs = Number(state.offset || 0) * 1000;
   const elapsed = (now + offsetMs) % cycle;
   const remaining = Math.max(0, Math.floor((cycle - elapsed) / 1000));
-  elements.countText.textContent = `${remaining}s`;
+  elements.countText.textContent = format('countSeconds', { remaining });
   const percent = Math.min(100, Math.max(0, (elapsed / cycle) * 100));
   elements.progressBar.style.width = `${percent}%`;
 }
@@ -204,33 +380,42 @@ function maskSecret(value) {
   return '•'.repeat(Math.max(8, Math.min(20, value.length)));
 }
 
-function updateResult(sourceLabel = '手动') {
+function updateResult(sourceLabel = t('sourceManual')) {
   elements.resultSource.textContent = sourceLabel;
-  elements.resultAccount.textContent = state.label || '—';
-  elements.resultIssuer.textContent = state.issuer || '—';
+  elements.resultAccount.textContent = state.label || t('defaultResultAccount');
+  elements.resultIssuer.textContent = state.issuer || t('issuerPlaceholder');
   const show = state.resultRevealed;
-  elements.resultSecret.textContent = show ? state.rawSecret || '—' : maskSecret(state.rawSecret);
-  elements.toggleResultSecret.textContent = show ? '隐藏' : '显示';
+  elements.resultSecret.textContent = show ? state.rawSecret || t('defaultResultAccount') : maskSecret(state.rawSecret);
+  elements.toggleResultSecret.textContent = show ? t('hide') : t('show');
   elements.copySecretBtn.disabled = !state.rawSecret;
 }
 
 function setSecretVisibility(show) {
   state.inputRevealed = show;
   elements.secretInput.type = show ? 'text' : 'password';
-  elements.toggleSecret.textContent = show ? '隐藏' : '显示';
+  elements.toggleSecret.textContent = show ? t('hide') : t('show');
 }
 
-function parseAndApply(rawValue, accountOverride, sourceLabel = '手动') {
+function updateLabels() {
+  elements.accountLabel.textContent = state.label || t('accountUnset');
+  elements.meta.textContent = format('metaTemplate', {
+    algorithm: state.algorithm,
+    digits: state.digits,
+    period: state.period,
+  });
+}
+
+function parseAndApply(rawValue, accountOverride, sourceLabel = t('sourceManual')) {
   const trimmed = rawValue.trim();
   if (!trimmed) {
-    showMessage('请输入 Base32 密钥或 otpauth:// 链接');
+    showMessage(t('messageEnterSecret'));
     return;
   }
   try {
     const otpData = parseOtpUri(trimmed);
     if (otpData) {
-      state.label = otpData.issuer && otpData.issuer !== '—' ? `${otpData.issuer} (${otpData.label})` : otpData.label;
-      state.issuer = otpData.issuer || '—';
+      state.label = otpData.issuer && otpData.issuer !== t('issuerPlaceholder') ? `${otpData.issuer} (${otpData.label})` : otpData.label;
+      state.issuer = otpData.issuer || t('issuerPlaceholder');
       state.rawSecret = otpData.secret;
       state.secret = decodeBase32(otpData.secret);
       state.digits = otpData.digits;
@@ -240,8 +425,8 @@ function parseAndApply(rawValue, accountOverride, sourceLabel = '手动') {
       elements.digitsInput.value = state.digits;
       elements.periodInput.value = state.period;
     } else {
-      state.label = accountOverride || '自定义账户';
-      state.issuer = '—';
+      state.label = accountOverride || t('sourceManual');
+      state.issuer = t('issuerPlaceholder');
       state.rawSecret = trimmed;
       state.secret = decodeBase32(trimmed);
     }
@@ -249,15 +434,10 @@ function parseAndApply(rawValue, accountOverride, sourceLabel = '手动') {
     updateLabels();
     refreshCode();
     updateResult(sourceLabel);
-    showMessage('密钥已更新，验证码自动刷新中', 'success');
+    showMessage(t('messageSecretUpdated'), 'success');
   } catch (err) {
     showMessage(err.message, 'danger');
   }
-}
-
-function updateLabels() {
-  elements.accountLabel.textContent = state.label;
-  elements.meta.textContent = `算法 ${state.algorithm} · 位数 ${state.digits} · 周期 ${state.period}s`;
 }
 
 function handleApply() {
@@ -265,33 +445,33 @@ function handleApply() {
   state.digits = Math.min(10, Math.max(6, Number(elements.digitsInput.value) || 6));
   state.period = Math.min(120, Math.max(10, Number(elements.periodInput.value) || 30));
   state.offset = Number(elements.offsetInput.value || 0);
-  parseAndApply(elements.secretInput.value, elements.accountInput.value.trim(), '手动');
+  parseAndApply(elements.secretInput.value, elements.accountInput.value.trim(), t('sourceManual'));
 }
 
 function clearAll() {
-  state.label = '未设置';
-  state.issuer = '—';
+  state.label = t('accountUnset');
+  state.issuer = t('issuerPlaceholder');
   state.secret = null;
   state.rawSecret = '';
   elements.secretInput.value = '';
   elements.accountInput.value = '';
   elements.otpValue.textContent = '------';
-  elements.accountLabel.textContent = '未设置';
+  elements.accountLabel.textContent = t('accountUnset');
   elements.nextOtp.textContent = '------';
   elements.copyCodeBtn.disabled = true;
   state.lastCode = null;
   state.nextCode = null;
-  updateResult('手动');
-  showMessage('已清除当前密钥', 'warning');
+  updateResult(t('sourceManual'));
+  showMessage(t('messageSecretCleared'), 'warning');
 }
 
 async function copyCode() {
   if (!state.lastCode) return;
   try {
     await navigator.clipboard.writeText(state.lastCode);
-    showMessage('已复制到剪贴板', 'success');
+    showMessage(t('messageCopyCode'), 'success');
   } catch (err) {
-    showMessage('复制失败：' + err.message, 'danger');
+    showMessage(format('messageCopyFailed', { reason: err.message }), 'danger');
   }
 }
 
@@ -299,9 +479,9 @@ async function copySecret() {
   if (!state.rawSecret) return;
   try {
     await navigator.clipboard.writeText(state.rawSecret);
-    showMessage('密钥已复制', 'success');
+    showMessage(t('messageCopySecret'), 'success');
   } catch (err) {
-    showMessage('复制失败：' + err.message, 'danger');
+    showMessage(format('messageCopyFailed', { reason: err.message }), 'danger');
   }
 }
 
@@ -311,13 +491,13 @@ async function startCamera() {
     state.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     elements.video.srcObject = state.stream;
     await elements.video.play();
-    elements.scanStatus.textContent = '摄像头已开启，正在扫描...';
-    elements.overlay.textContent = '将二维码置于取景框中央';
-    elements.cameraToggle.textContent = '停止扫描';
+    elements.scanStatus.textContent = t('scanStatusScanning');
+    elements.overlay.textContent = t('scanOverlayActive');
+    elements.cameraToggle.textContent = t('stopCamera');
     scanLoop();
   } catch (err) {
-    showMessage('无法开启摄像头：' + err.message, 'danger');
-    elements.scanStatus.textContent = '摄像头不可用';
+    showMessage(format('cameraError', { reason: err.message }), 'danger');
+    elements.scanStatus.textContent = t('scanStatusUnavailable');
     stopCamera();
   } finally {
     elements.cameraToggle.disabled = false;
@@ -330,9 +510,9 @@ function stopCamera() {
     state.stream = null;
   }
   elements.video.srcObject = null;
-  elements.cameraToggle.textContent = '开启摄像头';
-  elements.scanStatus.textContent = '摄像头未启动';
-  elements.overlay.textContent = '点击“开启摄像头”开始扫描';
+  elements.cameraToggle.textContent = t('startCamera');
+  elements.scanStatus.textContent = t('scanStatusIdle');
+  elements.overlay.textContent = t('scanOverlayIdle');
 }
 
 function toggleCamera() {
@@ -355,9 +535,9 @@ function scanLoop() {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const code = jsQR(imageData.data, imageData.width, imageData.height);
     if (code) {
-      elements.scanStatus.textContent = '二维码已识别，正在解析...';
+      elements.scanStatus.textContent = t('uploadStatusParsed');
       stopCamera();
-      parseAndApply(code.data, elements.accountInput.value.trim(), '摄像头');
+      parseAndApply(code.data, elements.accountInput.value.trim(), t('sourceCamera'));
       return;
     }
     requestAnimationFrame(render);
@@ -368,6 +548,7 @@ function scanLoop() {
 function handleUpload(event) {
   const file = event.target.files?.[0];
   if (!file) return;
+  elements.uploadStatus.textContent = t('uploadStatusReading');
   const reader = new FileReader();
   reader.onload = () => {
     const img = new Image();
@@ -380,39 +561,90 @@ function handleUpload(event) {
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
       if (code) {
-        parseAndApply(code.data, elements.accountInput.value.trim(), '图片');
-        showMessage('已从图片解析二维码', 'success');
+        parseAndApply(code.data, elements.accountInput.value.trim(), t('sourceImage'));
+        elements.uploadStatus.textContent = t('uploadStatusParsed');
+        showMessage(t('qrParsedFromImage'), 'success');
       } else {
-        showMessage('未识别到二维码', 'warning');
+        elements.uploadStatus.textContent = t('uploadStatusNotFound');
+        showMessage(t('qrNotFound'), 'warning');
       }
     };
-    img.onerror = () => showMessage('图片读取失败', 'danger');
+    img.onerror = () => {
+      elements.uploadStatus.textContent = t('uploadStatusNotFound');
+      showMessage(t('qrNotFound'), 'danger');
+    };
     img.src = reader.result;
   };
-  reader.onerror = () => showMessage('文件读取失败', 'danger');
+  reader.onerror = () => {
+    elements.uploadStatus.textContent = t('uploadStatusNotFound');
+    showMessage(t('qrNotFound'), 'danger');
+  };
   reader.readAsDataURL(file);
 }
 
 function switchMode(mode) {
   const isManual = mode === 'manual';
+  const isScan = mode === 'scan';
   elements.modeManual.classList.toggle('active', isManual);
   elements.modeManual.setAttribute('aria-selected', isManual);
-  elements.modeScan.classList.toggle('active', !isManual);
-  elements.modeScan.setAttribute('aria-selected', !isManual);
+  elements.modeScan.classList.toggle('active', isScan);
+  elements.modeScan.setAttribute('aria-selected', isScan);
+  elements.modeUpload.classList.toggle('active', mode === 'upload');
+  elements.modeUpload.setAttribute('aria-selected', mode === 'upload');
   elements.manualPane.hidden = !isManual;
-  elements.scanPane.hidden = isManual;
-  if (isManual) {
+  elements.scanPane.hidden = !isScan;
+  elements.uploadPane.hidden = mode !== 'upload';
+  if (!isScan) {
     stopCamera();
+  }
+  if (mode === 'upload') {
+    elements.uploadStatus.textContent = t('uploadStatusIdle');
   }
 }
 
+function applyStaticTranslations() {
+  document.title = t('pageTitle');
+  document.documentElement.lang = state.locale;
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  elements.secretInput.placeholder = t('secretPlaceholder');
+  elements.copyCodeBtn.setAttribute('aria-label', t('copyCode'));
+  elements.languageToggle.setAttribute('aria-label', t('languageToggle'));
+  elements.languageToggle.setAttribute('title', t('languageToggle'));
+  elements.languageCode.textContent = t('languageCode');
+  elements.overlay.textContent = state.stream ? t('scanOverlayActive') : t('scanOverlayIdle');
+  elements.scanStatus.textContent = state.stream ? t('scanStatusScanning') : t('scanStatusIdle');
+  elements.uploadStatus.textContent = t('uploadStatusIdle');
+  updateLabels();
+  updateResult(t('resultSourceNone'));
+  updateCountdown();
+}
+
+function cycleLocale() {
+  const currentIndex = localeOrder.indexOf(state.locale);
+  const nextLocale = localeOrder[(currentIndex + 1) % localeOrder.length];
+  if (!state.secret && state.label === t('accountUnset', state.locale)) {
+    state.label = t('accountUnset', nextLocale);
+  }
+  if (!state.secret && state.issuer === t('issuerPlaceholder', state.locale)) {
+    state.issuer = t('issuerPlaceholder', nextLocale);
+  }
+  state.locale = nextLocale;
+  applyStaticTranslations();
+}
+
 function init() {
+  applyStaticTranslations();
+
   elements.applyBtn.addEventListener('click', handleApply);
   elements.clearBtn.addEventListener('click', clearAll);
   elements.copyCodeBtn.addEventListener('click', copyCode);
   elements.copySecretBtn.addEventListener('click', copySecret);
   elements.cameraToggle.addEventListener('click', toggleCamera);
   elements.upload.addEventListener('change', handleUpload);
+  elements.languageToggle.addEventListener('click', cycleLocale);
+
   elements.secretInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -426,13 +658,14 @@ function init() {
   elements.toggleSecret.addEventListener('click', () => setSecretVisibility(!state.inputRevealed));
   elements.toggleResultSecret.addEventListener('click', () => {
     state.resultRevealed = !state.resultRevealed;
-    updateResult(elements.resultSource.textContent || '手动');
+    updateResult(elements.resultSource.textContent || t('sourceManual'));
   });
   elements.modeManual.addEventListener('click', () => switchMode('manual'));
   elements.modeScan.addEventListener('click', () => switchMode('scan'));
+  elements.modeUpload.addEventListener('click', () => switchMode('upload'));
 
   updateLabels();
-  updateResult('手动');
+  updateResult(t('resultSourceNone'));
   startTicker();
 }
 

@@ -1,26 +1,26 @@
-# 临时 2FA 生成器
+# 2FA
 
-纯前端的 TOTP 工具，支持手动输入密钥、摄像头扫码或上传二维码图片，适合部署到 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管平台。
+轻量的前端 TOTP 工具，离线运行、无需后端，支持跟随浏览器语言自动切换中英文。
 
-## 功能
-- 两个核心卡片：左侧聚焦验证码显示（含下一个验证码预览），右侧在“手动输入”与“扫码 / 上传”之间切换。
-- 手动输入 Base32 密钥或粘贴 `otpauth://` URI，输入框未聚焦自动遮挡，可点击显示。
-- 摄像头实时扫描二维码（单个按钮开启/停止），或上传图片识别二维码，解析结果会显示账户、发行方与密钥（默认隐藏，支持复制）。
-- 默认 30 秒、6 位验证码，可在“高级”中调整算法（SHA-1/256/512）、位数、周期、时间偏移；账户字段同样位于高级选项。
-- 验证码自动刷新、展示当前/下一周期并支持一键复制。所有计算在浏览器完成，不写入后端或持久存储。
+## 功能（中文）
+- 纯浏览器运算，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。
+- 顶部语言切换（简洁图标），默认跟随浏览器语言。
+- 三种录入方式：手动输入、摄像头扫码、上传二维码图片；解析结果可单独复制密钥并默认隐藏。
+- 高级选项支持算法（SHA-1/256/512）、位数、周期、时间偏移调整，显示当前与下一次验证码并提供复制按钮。
+- 输入框失焦自动遮挡密钥，二维码与密钥都在本地解析，安全快捷。
 
-### 移动端提示
-- 页面控件在手机上自动全宽，摄像头按钮可直接请求后摄像头权限；上传图片保持常规文件选择，不强制调用相机。
-- 输入框失焦即隐藏密钥内容，适合在公共环境快速使用。
+## Features (English)
+- Browser-only TOTP helper that works on any static host (GitHub Pages, Cloudflare Pages, EdgeOne Pages, Vercel, Netlify, Esa Pages, etc.).
+- Simple language toggle in the header; defaults to the browser locale (English/Chinese).
+- Three input modes: manual entry, live camera scanning, and QR image upload. Parsed details stay hidden by default and support copying.
+- Advanced settings for algorithm (SHA-1/256/512), digits, period, and time offset with current/next code preview and copy button.
+- Secrets stay obfuscated when unfocused; all QR parsing and code generation happen locally for quick, private use.
 
-## 本地预览
-直接打开 `index.html` 即可使用，或使用简单的静态服务器：
+## 本地预览 / Local preview
+直接打开 `index.html` 即可，或运行简易静态服务器：
 
 ```bash
 python -m http.server 8000
 ```
 
-然后访问 http://localhost:8000。
-
-## 部署
-将仓库推送到任意静态托管平台即可（GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等）。无需构建步骤，保持 `index.html`、`styles.css`、`script.js` 三个文件即可。
+然后访问 http://localhost:8000 。 / Open http://localhost:8000 after starting the server.
