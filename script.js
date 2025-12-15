@@ -13,6 +13,7 @@ const elements = {
   accountLabel: document.getElementById('account-label'),
   progressBar: document.getElementById('progress-bar'),
   meta: document.getElementById('meta'),
+  countText: document.getElementById('count-text'),
   startCamera: document.getElementById('start-camera'),
   stopCamera: document.getElementById('stop-camera'),
   upload: document.getElementById('upload'),
@@ -125,6 +126,7 @@ async function refreshCode() {
 function updateCountdown() {
   if (!state.secret) {
     elements.countdown.textContent = '等待输入密钥';
+    elements.countText.textContent = '等待密钥';
     elements.progressBar.style.width = '0%';
     elements.otpValue.textContent = '------';
     elements.copyButtons.forEach((btn) => (btn.disabled = true));
@@ -136,6 +138,7 @@ function updateCountdown() {
   const elapsed = (now + offsetMs) % cycle;
   const remaining = Math.max(0, Math.floor((cycle - elapsed) / 1000));
   elements.countdown.textContent = `本周期剩余 ${remaining}s`;
+  elements.countText.textContent = `${remaining}s`;
   const percent = Math.min(100, Math.max(0, (elapsed / cycle) * 100));
   elements.progressBar.style.width = `${percent}%`;
 }

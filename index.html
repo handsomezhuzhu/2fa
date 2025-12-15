@@ -14,37 +14,59 @@
 <body>
   <header class="hero">
     <div>
-      <p class="eyebrow">纯前端 · 即开即用</p>
-      <h1>临时 2FA 生成器</h1>
-      <p class="lede">手动输入、扫码或上传二维码，随时生成一次性验证码，无需后端即可部署在 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify 等静态平台。</p>
+      <p class="eyebrow">TOTP · 前端离线</p>
+      <h1>临时 2FA</h1>
     </div>
     <div class="hero-actions">
-      <button id="copy-current" class="primary" disabled>复制当前验证码</button>
-      <span id="countdown" aria-live="polite">等待输入密钥</span>
+      <button id="copy-current" class="primary" disabled>复制验证码</button>
+      <span id="countdown" aria-live="polite">等待密钥</span>
     </div>
   </header>
 
   <main class="layout">
-    <section class="card" aria-labelledby="manual-entry-title">
+    <section class="card highlight" aria-labelledby="code-title">
       <div class="section-header">
-        <h2 id="manual-entry-title">手动输入密钥</h2>
-        <p class="hint">优先推荐：将服务提供的 Base32 密钥直接粘贴到这里</p>
+        <h2 id="code-title">验证码</h2>
+        <div class="chip" id="meta"></div>
+      </div>
+      <div class="code-focus">
+        <div class="account-line">
+          <div class="label">账户</div>
+          <div id="account-label" class="value">未设置</div>
+        </div>
+        <div class="code-block">
+          <div class="code" id="otp-value">------</div>
+          <button id="copy-inline" class="primary" disabled aria-label="复制验证码">复制</button>
+        </div>
+        <div class="progress-line">
+          <div class="progress">
+            <div id="progress-bar"></div>
+          </div>
+          <span class="count-text" id="count-text">等待密钥</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="manual-entry-title">
+      <div class="section-header compact">
+        <h2 id="manual-entry-title">添加密钥</h2>
+        <div class="chip subtle">手动优先</div>
       </div>
       <label class="field">
-        <span>账号名称（可选）</span>
-        <input id="account-input" type="text" placeholder="例如：user@example.com" autocomplete="off" />
+        <span>账号</span>
+        <input id="account-input" type="text" placeholder="user@example.com" autocomplete="off" />
       </label>
       <label class="field">
-        <span>密钥 / otpauth:// URI</span>
-        <input id="secret-input" type="text" placeholder="输入 Base32 密钥或 otpauth:// 网址" autocomplete="off" />
+        <span>密钥 / otpauth</span>
+        <input id="secret-input" type="text" placeholder="Base32 或 otpauth://" autocomplete="off" />
       </label>
       <div class="actions">
-        <button id="apply-secret" class="primary">应用密钥</button>
-        <button id="clear-secret" type="button" class="ghost">清除</button>
+        <button id="apply-secret" class="primary">应用</button>
+        <button id="clear-secret" type="button" class="ghost">重置</button>
       </div>
 
       <details class="advanced" id="advanced-toggle">
-        <summary>高级设置</summary>
+        <summary>高级</summary>
         <div class="advanced-grid">
           <label class="field">
             <span>算法</span>
@@ -59,11 +81,11 @@
             <input id="digits-input" type="number" min="6" max="10" value="6" />
           </label>
           <label class="field">
-            <span>周期（秒）</span>
+            <span>周期</span>
             <input id="period-input" type="number" min="10" max="120" step="5" value="30" />
           </label>
           <label class="field">
-            <span>时间偏移（秒，可选）</span>
+            <span>时间偏移</span>
             <input id="offset-input" type="number" value="0" />
           </label>
         </div>
@@ -71,60 +93,37 @@
     </section>
 
     <section class="card" aria-labelledby="scan-title">
-      <div class="section-header">
-        <div>
-          <h2 id="scan-title">扫码 / 上传</h2>
-          <p class="hint">可使用摄像头直接扫描二维码，或上传包含 otpauth 二维码的图片</p>
-        </div>
-        <div class="chip" id="scan-status">摄像头未启动</div>
+      <div class="section-header compact">
+        <h2 id="scan-title">扫码或上传</h2>
+        <div class="chip" id="scan-status">未启动</div>
       </div>
       <div class="scan-grid">
         <div class="video-wrap">
           <video id="camera" playsinline></video>
-          <div class="overlay" id="scan-overlay">点击“开启摄像头”开始扫描</div>
+          <div class="overlay" id="scan-overlay">开启摄像头以扫描</div>
         </div>
         <div class="scan-actions">
-          <button id="start-camera" class="secondary">开启摄像头</button>
-          <button id="stop-camera" type="button" class="ghost" disabled>停止摄像头</button>
+          <button id="start-camera" class="secondary">摄像头</button>
+          <button id="stop-camera" type="button" class="ghost" disabled>停止</button>
           <label class="file-btn">
             <input type="file" id="upload" accept="image/*" capture="environment" />
-            <span>上传二维码图片</span>
+            <span>上传图片</span>
           </label>
-          <p class="microcopy">提示：摄像头扫描时，将二维码置于取景框中央；上传图片时请确保包含完整二维码。</p>
         </div>
-      </div>
-    </section>
-
-    <section class="card" aria-labelledby="code-title">
-      <div class="section-header">
-        <h2 id="code-title">当前验证码</h2>
-        <p class="hint">当密钥有效时，验证码会自动刷新</p>
-      </div>
-      <div class="code-display">
-        <div>
-          <div class="label">账号</div>
-          <div id="account-label" class="value">未设置</div>
-        </div>
-        <div>
-          <div class="label">验证码</div>
-          <div class="code" id="otp-value">------</div>
-        </div>
-        <div>
-          <div class="label">刷新进度</div>
-          <div class="progress">
-            <div id="progress-bar"></div>
-          </div>
-        </div>
-      </div>
-      <div class="code-actions">
-        <button id="copy-inline" class="primary" disabled>复制验证码</button>
-        <div class="meta" id="meta"></div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p>所有计算均在浏览器完成，不会上传任何密钥。适合部署到 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管平台。</p>
+    <details>
+      <summary>使用说明</summary>
+      <ol>
+        <li>优先手动粘贴 Base32 密钥或 otpauth:// 链接，点击“应用”。</li>
+        <li>若有二维码，可直接开启摄像头或上传图片解析。</li>
+        <li>验证码自动随周期刷新，可随时复制到剪贴板。</li>
+        <li>所有计算均在浏览器完成，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。</li>
+      </ol>
+    </details>
   </footer>
 </body>
 </html>
