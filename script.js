@@ -33,7 +33,7 @@ const translations = {
     scanStatusIdle: '未启动',
     scanStatusScanning: '摄像头已开启，正在扫描...',
     scanStatusUnavailable: '摄像头不可用',
-    uploadTip: '上传二维码图片以解析密钥',
+    uploadTip: '上传或粘贴二维码图片以解析密钥',
     uploadButton: '上传图片',
     uploadStatusIdle: '等待上传',
     uploadStatusReading: '正在读取图片...',
@@ -109,7 +109,7 @@ const translations = {
     scanStatusIdle: 'Not started',
     scanStatusScanning: 'Camera on, scanning...',
     scanStatusUnavailable: 'Camera unavailable',
-    uploadTip: 'Upload a QR image to parse the secret',
+    uploadTip: 'Upload or paste a QR image to parse the secret',
     uploadButton: 'Upload image',
     uploadStatusIdle: 'Waiting for upload',
     uploadStatusReading: 'Reading image...',
@@ -545,41 +545,58 @@ function scanLoop() {
   requestAnimationFrame(render);
 }
 
-function handleUpload(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
+function decodeQrFromDataUrl(dataUrl, sourceLabel = t('sourceImage')) {
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    if (code) {
+      parseAndApply(code.data, elements.accountInput.value.trim(), sourceLabel);
+      elements.uploadStatus.textContent = t('uploadStatusParsed');
+      showMessage(t('qrParsedFromImage'), 'success');
+    } else {
+      elements.uploadStatus.textContent = t('uploadStatusNotFound');
+      showMessage(t('qrNotFound'), 'warning');
+    }
+  };
+  img.onerror = () => {
+    elements.uploadStatus.textContent = t('uploadStatusNotFound');
+    showMessage(t('qrNotFound'), 'danger');
+  };
+  img.src = dataUrl;
+}
+
+function handleImageBlob(blob, sourceLabel = t('sourceImage')) {
+  if (!blob) return;
   elements.uploadStatus.textContent = t('uploadStatusReading');
   const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
-      if (code) {
-        parseAndApply(code.data, elements.accountInput.value.trim(), t('sourceImage'));
-        elements.uploadStatus.textContent = t('uploadStatusParsed');
-        showMessage(t('qrParsedFromImage'), 'success');
-      } else {
-        elements.uploadStatus.textContent = t('uploadStatusNotFound');
-        showMessage(t('qrNotFound'), 'warning');
-      }
-    };
-    img.onerror = () => {
-      elements.uploadStatus.textContent = t('uploadStatusNotFound');
-      showMessage(t('qrNotFound'), 'danger');
-    };
-    img.src = reader.result;
-  };
+  reader.onload = () => decodeQrFromDataUrl(reader.result, sourceLabel);
   reader.onerror = () => {
     elements.uploadStatus.textContent = t('uploadStatusNotFound');
     showMessage(t('qrNotFound'), 'danger');
   };
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(blob);
+}
+
+function handleUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  handleImageBlob(file, t('sourceImage'));
+}
+
+function handlePaste(event) {
+  const items = event.clipboardData?.items;
+  if (!items || !items.length) return;
+  const imageItem = Array.from(items).find((item) => item.type.startsWith('image/'));
+  if (!imageItem) return;
+  event.preventDefault();
+  switchMode('upload');
+  handleImageBlob(imageItem.getAsFile(), t('sourceImage'));
 }
 
 function switchMode(mode) {
@@ -644,6 +661,7 @@ function init() {
   elements.cameraToggle.addEventListener('click', toggleCamera);
   elements.upload.addEventListener('change', handleUpload);
   elements.languageToggle.addEventListener('click', cycleLocale);
+  document.addEventListener('paste', handlePaste);
 
   elements.secretInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
