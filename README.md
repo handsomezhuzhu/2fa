@@ -2,6 +2,9 @@
 
 轻量的前端 TOTP 工具，离线运行、无需后端，支持跟随浏览器语言自动切换中英文。
 
+## 演示站点
+https://2fa.zhuzihan.com/
+
 ## 功能（中文）
 - 纯浏览器运算，适合 GitHub Pages、Cloudflare Pages、EdgeOne Pages、Vercel、Netlify、Esa Pages 等静态托管。
 - 顶部语言切换（简洁图标），默认跟随浏览器语言。
